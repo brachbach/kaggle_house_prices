@@ -2,6 +2,12 @@
 
 import pandas as pd
 
-df = pd.read_csv("data_from_kaggle/train.csv")
+train = pd.read_csv("data_from_kaggle/train.csv")
 
-print(df)
+median = train.loc[ : , "SalePrice"].median()
+
+test = pd.read_csv("data_from_kaggle/test.csv")
+
+test["SalePrice"] = median
+
+test.to_csv(path_or_buf="predictions/median.csv", columns=["Id", "SalePrice"], index=False)
