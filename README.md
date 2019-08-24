@@ -1,0 +1,1 @@
+An attempt (feeble so far) at this simple Kaggle challenge: https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data
