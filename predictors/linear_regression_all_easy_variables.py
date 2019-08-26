@@ -49,7 +49,7 @@ def predict_with_all_easy_linear(train, test):
 
     naive_price_predictions = linearRegressor.predict(test.loc[ : , easy_numerical_features])
 
-    no_zeros = np.array(naive_price_predictions).clip(10000)
+    no_zeros = np.array(naive_price_predictions).clip(100000)
 
     output = test.assign(SalePrice=no_zeros)
 
