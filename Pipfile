@@ -10,6 +10,7 @@ pandas = "*"
 jupyter = "*"
 scikit-learn = "*"
 jupyterlab = "*"
+sklearn = "*"
 
 [requires]
 python_version = "3.7"
