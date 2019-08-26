@@ -18,7 +18,8 @@ def evalute_predictor(train_filepath: str, predictor):
     validation = train.loc[ split_point: ]
     predictions = predictor(training, validation)
     validation_true_logs = np.log(validation["SalePrice"])
-    mse = mean_squared_error(validation_true_logs, np.log(predictions))
+    validation_predicted_logs = np.log(predictions["SalePrice"])
+    mse = mean_squared_error(validation_true_logs, validation_predicted_logs)
     return math.sqrt(mse)
     
     
