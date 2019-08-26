@@ -1,4 +1,4 @@
-# predict test based on a simple linear regression on train
+# predict test based on a linear regression on train LotArea alone
 
 import pandas as pd
 
