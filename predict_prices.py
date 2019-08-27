@@ -10,12 +10,15 @@ def predict_prices(train_filepath: str, test_filepath: str, predictor):
     predictions = predictor(train, test)
     predictions.to_csv(path_or_buf=f"predictions/{predictor.__name__}.csv", columns=["Id", "SalePrice"], index=False)
 
-def evalute_predictor(train_filepath: str, predictor):
-    train = train = pd.read_csv(train_filepath)
+def get_validation_data(train):
     train_n = len(train.index)
     split_point = math.floor(train_n * 0.7)
     training = train.loc[ 0:split_point ]
     validation = train.loc[ split_point: ]
+    return (training, validation)
+
+def evalute_predictor(train_filepath: str, predictor):
+    (training, validation) = get_validation_data(train)
     predictions = predictor(training, validation)
     validation_true_logs = np.log(validation["SalePrice"])
     validation_predicted_logs = np.log(predictions["SalePrice"])
