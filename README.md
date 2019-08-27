@@ -3,10 +3,10 @@ Using a simple Kaggle challenge (https://www.kaggle.com/c/house-prices-advanced-
 The best entry point is to run the Jupyter lab (visualize_predictions.ipynb) 
 
 TODO:
+- regularize the features so that they have mean zero -- now that I think about it, this should be quite helpful
 - convert non-numerical features into numbers so that they can be used
 - try a ** 2, ab, etc. in a linear regression
 - try using a simple neural net (maybe)
-- clean data in pandas for columns that require cleaning
 - switch to K folds or randomly selected samples for the train/validation split
 - probably switch to 85% train, 15% test
 - switch to a better imputation method, maybe multiple imputation: https://towardsdatascience.com/how-to-handle-missing-data-8646b18db0d4

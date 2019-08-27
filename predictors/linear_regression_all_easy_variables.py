@@ -1,7 +1,8 @@
 # predict test based on linear regression on all numerical, continuous variables
 
 from sklearn import linear_model
-from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import PolynomialFeatures, MinMaxScaler
+from pandas import DataFrame
 import numpy as np
 
 easy_numerical_features = [
@@ -41,8 +42,10 @@ easy_numerical_features = [
     "YrSold"
 ]
 
-def clean(df):
-    cleaned_df = df.fillna(df.mean())
+def prepare_x(house_data):
+    x = house_data.loc[ : , easy_numerical_features]
+    cleaned_x = x.fillna(x.mean())
+    # print(cleaned_x)
     # print(cleaned_df.loc[ : , [
     #     "GarageYrBlt",
     #     "GarageCars",
@@ -57,57 +60,50 @@ def clean(df):
     #     "BsmtFinSF2",
     #     "TotalBsmtSF"
     # ]])
-    return cleaned_df
+    scaled_x = (cleaned_x-cleaned_x.min())/(cleaned_x.max()-cleaned_x.min())
+    # print(scaled_x)
+    return scaled_x
+
+def predict_linear(train_x, train_y, test_x, reg, clip):
+    reg.fit(train_x, train_y)
+
+    naive_price_predictions = reg.predict(test_x)
+
+    clipped = np.array(naive_price_predictions).clip(100000)
+
+    return clipped
 
 def predict_with_all_easy_linear(train, test):
+    train_x = prepare_x(train)
+    train_y = train.loc[ : , "SalePrice"]
+    test_x = prepare_x(test)
 
-    clean_train = clean(train)
-    clean_test = clean(test)
+    reg = linear_model.LinearRegression()
 
-    linearRegressor = linear_model.LinearRegression()
+    predictions = predict_linear(train_x, train_y, test_x, reg, 100000)
 
-    linearRegressor.fit(clean_train.loc[ : , easy_numerical_features], clean_train.loc[ : , "SalePrice"])
-
-    naive_price_predictions = linearRegressor.predict(clean_test.loc[ : , easy_numerical_features])
-
-    clipped = np.array(naive_price_predictions).clip(100000)
-
-    output = clean_test.assign(SalePrice=clipped)
-
-    return output
+    return test.assign(SalePrice=predictions)
 
 def predict_with_ridge(train, test):
-
-    clean_train = clean(train)
-    clean_test = clean(test)
+    train_x = prepare_x(train)
+    train_y = train.loc[ : , "SalePrice"]
+    test_x = prepare_x(test)
 
     reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
 
-    reg.fit(clean_train.loc[ : , easy_numerical_features], clean_train.loc[ : , "SalePrice"])
+    predictions = predict_linear(train_x, train_y, test_x, reg, 100000)
 
-    naive_price_predictions = reg.predict(clean_test.loc[ : , easy_numerical_features])
-
-    clipped = np.array(naive_price_predictions).clip(100000)
-
-    output = clean_test.assign(SalePrice=clipped)
-
-    return output
+    return test.assign(SalePrice=predictions)
 
 def predict_with_polynomial_features_and_ridge(train, test, params):
-
-    clean_train = clean(train)
-    clean_test = clean(test)
-
     poly = PolynomialFeatures(params['degree'])
+
+    train_x = poly.fit_transform(prepare_x(train))
+    train_y = train.loc[ : , "SalePrice"]
+    test_x = poly.fit_transform(prepare_x(test))
 
     reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
 
-    reg.fit(poly.fit_transform(clean_train.loc[ : , easy_numerical_features]), clean_train.loc[ : , "SalePrice"])
+    predictions = predict_linear(train_x, train_y, test_x, reg, 100000)
 
-    naive_price_predictions = reg.predict(poly.fit_transform(clean_test.loc[ : , easy_numerical_features]))
-
-    clipped = np.array(naive_price_predictions).clip(params['clip'])
-
-    output = clean_test.assign(SalePrice=clipped)
-
-    return output
+    return test.assign(SalePrice=predictions)
