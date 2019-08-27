@@ -7,7 +7,9 @@ TODO:
 - try a ** 2, ab, etc. in a linear regression
 - try using a simple neural net (maybe)
 - clean data in pandas for columns that require cleaning
-
+- switch to K folds or randomly selected samples for the train/validation split
+- probably switch to 85% train, 15% test
+- switch to a better imputation method, maybe multiple imputation: https://towardsdatascience.com/how-to-handle-missing-data-8646b18db0d4
 
 Questions for a mentor:
 - am I making reasonable use of Jupyter Notebook?
