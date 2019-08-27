@@ -17,10 +17,10 @@ def get_validation_data(train):
     validation = train.loc[ split_point: ]
     return (training, validation)
 
-def evalute_predictor(train_filepath: str, predictor):
+def evalute_predictor(train_filepath: str, predictor, params={}):
     train = pd.read_csv(train_filepath)
     (training, validation) = get_validation_data(train)
-    predictions = predictor(training, validation)
+    predictions = predictor(training, validation, params) if params else predictor(training, validation)
     validation_true_logs = np.log(validation["SalePrice"])
     validation_predicted_logs = np.log(predictions["SalePrice"])
     mse = mean_squared_error(validation_true_logs, validation_predicted_logs)

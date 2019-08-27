@@ -51,9 +51,9 @@ def predict_with_all_easy_linear(train, test):
 
     naive_price_predictions = linearRegressor.predict(test.loc[ : , easy_numerical_features])
 
-    no_zeros = np.array(naive_price_predictions).clip(100000)
+    clipped = np.array(naive_price_predictions).clip(100000)
 
-    output = test.assign(SalePrice=no_zeros)
+    output = test.assign(SalePrice=clipped)
 
     return output
 
@@ -73,11 +73,11 @@ def predict_with_ridge(train, test):
 
     return output
 
-def predict_with_polynomial_features_and_ridge(train, test):
+def predict_with_polynomial_features_and_ridge(train, test, params):
 
     # commented-out features are known or strongly suspected to contain at least one non-numerical value
 
-    poly = PolynomialFeatures(2)
+    poly = PolynomialFeatures(params['degree'])
 
     reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
 
@@ -85,7 +85,7 @@ def predict_with_polynomial_features_and_ridge(train, test):
 
     naive_price_predictions = reg.predict(poly.fit_transform(test.loc[ : , easy_numerical_features]))
 
-    clipped = np.array(naive_price_predictions).clip(100000)
+    clipped = np.array(naive_price_predictions).clip(params['clip'])
 
     output = test.assign(SalePrice=clipped)
 
