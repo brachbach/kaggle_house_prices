@@ -1,6 +1,7 @@
 # predict test based on linear regression on all numerical, continuous variables
 
 from sklearn import linear_model
+from sklearn.preprocessing import PolynomialFeatures
 import numpy as np
 
 easy_numerical_features = [
@@ -65,6 +66,24 @@ def predict_with_ridge(train, test):
     reg.fit(train.loc[ : , easy_numerical_features], train.loc[ : , "SalePrice"])
 
     naive_price_predictions = reg.predict(test.loc[ : , easy_numerical_features])
+
+    clipped = np.array(naive_price_predictions).clip(100000)
+
+    output = test.assign(SalePrice=clipped)
+
+    return output
+
+def predict_with_polynomial_features_and_ridge(train, test):
+
+    # commented-out features are known or strongly suspected to contain at least one non-numerical value
+
+    poly = PolynomialFeatures(2)
+
+    reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
+
+    reg.fit(poly.fit_transform(train.loc[ : , easy_numerical_features]), train.loc[ : , "SalePrice"])
+
+    naive_price_predictions = reg.predict(poly.fit_transform(test.loc[ : , easy_numerical_features]))
 
     clipped = np.array(naive_price_predictions).clip(100000)
 
