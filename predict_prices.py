@@ -18,6 +18,7 @@ def get_validation_data(train):
     return (training, validation)
 
 def evalute_predictor(train_filepath: str, predictor):
+    train = pd.read_csv(train_filepath)
     (training, validation) = get_validation_data(train)
     predictions = predictor(training, validation)
     validation_true_logs = np.log(validation["SalePrice"])
