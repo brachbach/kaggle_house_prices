@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
-def predict_prices(train_filepath: str, test_filepath: str, predictor):
+def predict_prices(train_filepath: str, test_filepath: str, predictor, params={}):
     train = pd.read_csv(train_filepath)
     test = pd.read_csv(test_filepath)
-    predictions = predictor(train, test)
+    predictions = predictor(train, test, params) if params else predictor(train, test)
     predictions.to_csv(path_or_buf=f"predictions/{predictor.__name__}.csv", columns=["Id", "SalePrice"], index=False)
 
 def get_validation_data(train):
