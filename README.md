@@ -1,5 +1,7 @@
 Using a simple Kaggle challenge (https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data) to practice Python and data science skills
 
+The best entry point is to run the Jupyter lab (visualize_predictions.ipynb) 
+
 TODO:
 - convert non-numerical features into numbers so that they can be used
 - try to avoid overfitting in a linear regression
