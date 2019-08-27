@@ -66,7 +66,7 @@ def predict_with_ridge(train, test):
 
     naive_price_predictions = reg.predict(test.loc[ : , easy_numerical_features])
 
-    clipped = np.array(naive_price_predictions).clip(10000)
+    clipped = np.array(naive_price_predictions).clip(100000)
 
     output = test.assign(SalePrice=clipped)
 
