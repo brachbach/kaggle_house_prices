@@ -69,7 +69,7 @@ def predict_linear(train_x, train_y, test_x, reg, clip):
 
     naive_price_predictions = reg.predict(test_x)
 
-    clipped = np.array(naive_price_predictions).clip(100000)
+    clipped = np.array(naive_price_predictions).clip(clip)
 
     return clipped
 
@@ -104,6 +104,6 @@ def predict_with_polynomial_features_and_ridge(train, test, params):
 
     reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
 
-    predictions = predict_linear(train_x, train_y, test_x, reg, 100000)
+    predictions = predict_linear(train_x, train_y, test_x, reg, params['clip'])
 
     return test.assign(SalePrice=predictions)
