@@ -15,16 +15,19 @@ def predict_prices(train_filepath: str, test_filepath: str, predictor, params={}
 def get_validation_data(train):
     return train_test_split(train, train_size = 0.8)
 
-def evalute_predictor(train_filepath: str, predictor, params={}):
+def evalute_predictor(train_filepath: str, predictor, params={}, runs=10):
     train = pd.read_csv(train_filepath)
-    (training, validation) = get_validation_data(train)
-    # print("train:", train)
-    # print("training:", training)
-    # print("validation:", validation)
-    predictions = predictor(training, validation, params) if params else predictor(training, validation)
-    validation_true_logs = np.log(validation["SalePrice"])
-    validation_predicted_logs = np.log(predictions["SalePrice"])
-    mse = mean_squared_error(validation_true_logs, validation_predicted_logs)
-    return math.sqrt(mse)
+    total_rmse = 0
+    for i in range(runs):
+        (training, validation) = get_validation_data(train)
+        # print("train:", train)
+        # print("training:", training)
+        # print("validation:", validation)
+        predictions = predictor(training, validation, params) if params else predictor(training, validation)
+        validation_true_logs = np.log(validation["SalePrice"])
+        validation_predicted_logs = np.log(predictions["SalePrice"])
+        mse = mean_squared_error(validation_true_logs, validation_predicted_logs)
+        total_rmse += math.sqrt(mse)
+    return total_rmse / runs
     
     
