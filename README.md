@@ -17,6 +17,8 @@ Questions for a mentor:
 - in general, is my code Pythonic?
 - in general, does my coding style make sense for this sort of exploratory data science?
 - is VSCode a reasonable editor to use?
+-- how do I get VSCode to tell me if I'm e.g. referring to a variable that doesn't exist?
+- can I make better (more) use of types?
 - I know it's possible to use a neural net for a continuous value prediction problem like this -- is it advisable?
 
 Curiosity questions:

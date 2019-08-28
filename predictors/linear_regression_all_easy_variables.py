@@ -5,7 +5,31 @@ from sklearn.preprocessing import PolynomialFeatures, MinMaxScaler
 from pandas import DataFrame
 import numpy as np
 
-easy_numerical_features = [
+original_features = [
+    "LotArea",
+    "OverallQual",
+    "OverallCond",
+    "YearBuilt",
+    "YearRemodAdd",
+    "1stFlrSF",
+    "2ndFlrSF",
+    "LowQualFinSF",
+    "GrLivArea",
+    "KitchenAbvGr",
+    "TotRmsAbvGrd",
+    "Fireplaces",
+    "WoodDeckSF",
+    "OpenPorchSF",
+    "EnclosedPorch",
+    "3SsnPorch",
+    "ScreenPorch",
+    "PoolArea",
+    "MiscVal",
+    "MoSold",
+    "YrSold"
+]
+
+all_numerical_features = [
     "LotFrontage",
     "LotArea",
     "OverallQual",
@@ -42,26 +66,16 @@ easy_numerical_features = [
     "YrSold"
 ]
 
-def prepare_x(house_data):
-    x = house_data.loc[ : , easy_numerical_features]
+def prepare_x(house_data, params={}):
+    scale = params['scale'] if 'scale' in params else True
+    features = params['features'] if 'features' in params else all_numerical_features
+    x = house_data.loc[ : , features]
     cleaned_x = x.fillna(x.mean())
-    # print(cleaned_x)
-    # print(cleaned_df.loc[ : , [
-    #     "GarageYrBlt",
-    #     "GarageCars",
-    #     "GarageArea",
-    #     "BsmtFullBath",
-    #     "BsmtHalfBath",
-    #     "FullBath",
-    #     "HalfBath",
-    #     "BedroomAbvGr",
-    #     "MasVnrArea",
-    #     "BsmtFinSF1",
-    #     "BsmtFinSF2",
-    #     "TotalBsmtSF"
-    # ]])
+  
+    if not scale:
+        return cleaned_x
+
     scaled_x = (cleaned_x-cleaned_x.min())/(cleaned_x.max()-cleaned_x.min())
-    # print(scaled_x)
     return scaled_x
 
 def predict_linear(train_x, train_y, test_x, reg, clip):
@@ -73,10 +87,10 @@ def predict_linear(train_x, train_y, test_x, reg, clip):
 
     return clipped
 
-def predict_with_all_easy_linear(train, test):
-    train_x = prepare_x(train)
+def predict_with_all_easy_linear(train, test, params={}):
+    train_x = prepare_x(train, params)
     train_y = train.loc[ : , "SalePrice"]
-    test_x = prepare_x(test)
+    test_x = prepare_x(test, params)
 
     reg = linear_model.LinearRegression()
 
@@ -84,10 +98,10 @@ def predict_with_all_easy_linear(train, test):
 
     return test.assign(SalePrice=predictions)
 
-def predict_with_ridge(train, test):
-    train_x = prepare_x(train)
+def predict_with_ridge(train, test, params={}):
+    train_x = prepare_x(train, params)
     train_y = train.loc[ : , "SalePrice"]
-    test_x = prepare_x(test)
+    test_x = prepare_x(test, params)
 
     reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
 
@@ -98,9 +112,9 @@ def predict_with_ridge(train, test):
 def predict_with_polynomial_features_and_ridge(train, test, params):
     poly = PolynomialFeatures(params['degree'])
 
-    train_x = poly.fit_transform(prepare_x(train))
+    train_x = poly.fit_transform(prepare_x(train, params))
     train_y = train.loc[ : , "SalePrice"]
-    test_x = poly.fit_transform(prepare_x(test))
+    test_x = poly.fit_transform(prepare_x(test, params))
 
     reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
 
