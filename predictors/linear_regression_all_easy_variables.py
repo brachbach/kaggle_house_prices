@@ -115,7 +115,7 @@ def predict_with_ridge(train, test, params={}):
     train_y = train.loc[ : , "SalePrice"]
     test_x = prepare_x(test, params)
 
-    reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
+    reg = linear_model.RidgeCV()
 
     predictions = predict_linear(train_x, train_y, test_x, reg, 100000)
 
@@ -128,7 +128,7 @@ def predict_with_polynomial_features_and_ridge(train, test, params):
     train_y = train.loc[ : , "SalePrice"]
     test_x = DataFrame(poly.fit_transform(prepare_x(test, params)))
 
-    reg = linear_model.RidgeCV(alphas=np.logspace(-6, 6, 13))
+    reg = linear_model.RidgeCV()
 
     predictions = predict_linear(train_x, train_y, test_x, reg, params['clip'])
 
