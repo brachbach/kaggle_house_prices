@@ -3,6 +3,8 @@ import math
 import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split
+
 
 def predict_prices(train_filepath: str, test_filepath: str, predictor, params={}):
     train = pd.read_csv(train_filepath)
@@ -11,15 +13,14 @@ def predict_prices(train_filepath: str, test_filepath: str, predictor, params={}
     predictions.to_csv(path_or_buf=f"predictions/{predictor.__name__}.csv", columns=["Id", "SalePrice"], index=False)
 
 def get_validation_data(train):
-    train_n = len(train.index)
-    split_point = math.floor(train_n * 0.7)
-    training = train.loc[ 0:split_point ]
-    validation = train.loc[ split_point: ]
-    return (training, validation)
+    return train_test_split(train, train_size = 0.8)
 
 def evalute_predictor(train_filepath: str, predictor, params={}):
     train = pd.read_csv(train_filepath)
     (training, validation) = get_validation_data(train)
+    # print("train:", train)
+    # print("training:", training)
+    # print("validation:", validation)
     predictions = predictor(training, validation, params) if params else predictor(training, validation)
     validation_true_logs = np.log(validation["SalePrice"])
     validation_predicted_logs = np.log(predictions["SalePrice"])
